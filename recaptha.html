@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080808" />
+
+  <title>Verifikasi Keamanan</title>
+
+  <style>
+    :root {
+      --black: #080808;
+      --black-soft: #111111;
+      --panel: rgba(22, 22, 22, .88);
+      --gold: #d9a441;
+      --gold-light: #ffe08a;
+      --gold-dark: #9b6a13;
+      --white: #fffaf0;
+      --muted: #b7b0a1;
+      --line: rgba(217, 164, 65, .28);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      color: var(--white);
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(217, 164, 65, .16), transparent 34%),
+        radial-gradient(circle at 0% 100%, rgba(217, 164, 65, .10), transparent 30%),
+        var(--black);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      opacity: .08;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .orb {
+      position: fixed;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(50px);
+      opacity: .15;
+      background: var(--gold);
+      animation: floatOrb 8s ease-in-out infinite;
+    }
+
+    .orb-one {
+      top: -150px;
+      right: -80px;
+    }
+
+    .orb-two {
+      bottom: -160px;
+      left: -100px;
+      animation-delay: -3s;
+    }
+
+    .card {
+      position: relative;
+      width: min(100%, 530px);
+      padding: 46px 34px 34px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.055), transparent 35%),
+        var(--panel);
+      box-shadow:
+        0 25px 90px rgba(0, 0, 0, .7),
+        0 0 60px rgba(217, 164, 65, .08),
+        inset 0 1px 0 rgba(255, 255, 255, .08);
+      backdrop-filter: blur(18px);
+      animation: cardIn .8s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .card::before,
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-color: var(--gold);
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .card::before {
+      top: 18px;
+      left: 18px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+      border-radius: 12px 0 0 0;
+    }
+
+    .card::after {
+      right: 18px;
+      bottom: 18px;
+      border-right: 1px solid;
+      border-bottom: 1px solid;
+      border-radius: 0 0 12px 0;
+    }
+
+    .brand {
+      margin-bottom: 27px;
+      color: var(--gold-light);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .security-icon {
+      position: relative;
+      width: 94px;
+      height: 94px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 25px;
+      border: 1px solid rgba(217, 164, 65, .45);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(217,164,65,.2), transparent 66%),
+        #17130c;
+      box-shadow:
+        0 0 0 9px rgba(217, 164, 65, .045),
+        0 0 36px rgba(217, 164, 65, .18);
+      animation: iconPulse 3s ease-in-out infinite;
+    }
+
+    .security-icon::before {
+      content: "";
+      position: absolute;
+      inset: -9px;
+      border: 1px dashed rgba(217, 164, 65, .32);
+      border-radius: 50%;
+      animation: rotate 12s linear infinite;
+    }
+
+    .shield {
+      position: relative;
+      width: 33px;
+      height: 40px;
+      border: 3px solid var(--gold-light);
+      border-radius: 48% 48% 54% 54%;
+      clip-path: polygon(50% 0, 94% 15%, 88% 64%, 50% 100%, 12% 64%, 6% 15%);
+      background: linear-gradient(145deg, rgba(255,224,138,.25), transparent);
+    }
+
+    .shield::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 7px;
+      left: 6px;
+      top: 12px;
+      border-left: 3px solid var(--gold-light);
+      border-bottom: 3px solid var(--gold-light);
+      transform: rotate(-45deg);
+    }
+
+    h1 {
+      margin-bottom: 14px;
+      color: var(--white);
+      font-size: clamp(26px, 6vw, 34px);
+      letter-spacing: -.8px;
+    }
+
+    .subtitle {
+      max-width: 400px;
+      margin: 0 auto 27px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .divider {
+      width: 80px;
+      height: 2px;
+      margin: 0 auto 27px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .continue-button {
+      position: relative;
+      width: 100%;
+      min-height: 61px;
+      overflow: hidden;
+      border: 1px solid var(--gold-light);
+      border-radius: 13px;
+      color: #171008;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), #b47b1d);
+      box-shadow:
+        0 10px 25px rgba(217, 164, 65, .22),
+        inset 0 1px 0 rgba(255,255,255,.55);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+
+    .continue-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 70%;
+      height: 100%;
+      transform: skewX(-22deg);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, .55),
+        transparent
+      );
+      transition: left .7s ease;
+    }
+
+    .continue-button:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.08);
+      box-shadow:
+        0 16px 32px rgba(217, 164, 65, .30),
+        0 0 22px rgba(217, 164, 65, .18);
+    }
+
+    .continue-button:hover::before {
+      left: 145%;
+    }
+
+    .continue-button:active {
+      transform: translateY(0) scale(.98);
+    }
+
+    .continue-button:focus-visible {
+      outline: 3px solid var(--white);
+      outline-offset: 4px;
+    }
+
+    .button-content {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+    }
+
+    .arrow {
+      font-size: 23px;
+      transition: transform .2s ease;
+    }
+
+    .continue-button:hover .arrow {
+      transform: translateX(5px);
+    }
+
+    .spinner {
+      display: none;
+      width: 19px;
+      height: 19px;
+      border: 3px solid rgba(0,0,0,.28);
+      border-top-color: #171008;
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+
+    .loading {
+      pointer-events: none;
+      filter: brightness(.92);
+    }
+
+    .loading .spinner {
+      display: inline-block;
+    }
+
+    .loading .button-text {
+      font-size: 0;
+    }
+
+    .loading .button-text::after {
+      content: "Memverifikasi...";
+      font-size: 18px;
+    }
+
+    .loading .arrow {
+      display: none;
+    }
+
+    .status {
+      min-height: 21px;
+      margin-top: 17px;
+      color: var(--gold-light);
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity .3s ease;
+    }
+
+    .status.show {
+      opacity: 1;
+    }
+
+    .notice {
+      margin-top: 22px;
+      color: #8e887c;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .notice a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    .notice a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-mark {
+      margin-top: 27px;
+      color: #6d675d;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes iconPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 9px rgba(217, 164, 65, .045),
+          0 0 36px rgba(217, 164, 65, .18);
+      }
+      50% {
+        transform: scale(1.045);
+        box-shadow:
+          0 0 0 14px rgba(217, 164, 65, .025),
+          0 0 48px rgba(217, 164, 65, .28);
+      }
+    }
+
+    @keyframes rotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes floatOrb {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(18px, -25px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 37px 22px 28px;
+        border-radius: 22px;
+      }
+
+      .brand {
+        font-size: 10px;
+        letter-spacing: 3px;
+      }
+
+      .subtitle {
+        font-size: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="orb orb-one"></div>
+  <div class="orb orb-two"></div>
+
+  <main class="card" aria-labelledby="pageTitle">
+    <div class="brand">Secure Access</div>
+
+    <div class="security-icon" aria-hidden="true">
+      <div class="shield"></div>
+    </div>
+
+    <h1 id="pageTitle">Verifikasi Keamanan</h1>
+
+    <p class="subtitle">
+      Pastikan Anda adalah pengguna yang sah untuk melanjutkan
+      ke halaman berikutnya.
+    </p>
+
+    <div class="divider"></div>
+
+    <button
+      class="continue-button"
+      id="continueButton"
+      type="button"
+      aria-label="Melanjutkan proses verifikasi"
+    >
+      <span class="button-content">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="button-text">Melanjutkan</span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </span>
+    </button>
+
+    <div
+      class="status"
+      id="statusMessage"
+      role="status"
+      aria-live="polite"
+    >
+      Verifikasi berhasil. Mengarahkan Anda...
+    </div>
+
+    <p class="notice">
+      Dengan melanjutkan, Anda menyetujui
+      <a href="#">Kebijakan Privasi</a>
+      dan
+      <a href="#">Persyaratan Layanan</a>.
+    </p>
+
+    <div class="footer-mark">Protected Connection</div>
+  </main>
+
+  <script>
+    // Ganti URL ini dengan halaman tujuan Anda.
+    const TUJUAN_URL = "https://pafimalang.org/register?referral=jonathannn";
+
+    const button = document.getElementById("continueButton");
+    const statusMessage = document.getElementById("statusMessage");
+
+    button.addEventListener("click", function () {
+      button.classList.add("loading");
+      statusMessage.classList.add("show");
+
+      // Waktu animasi sebelum berpindah halaman.
+      setTimeout(function () {
+        window.location.href = TUJUAN_URL;
+      }, 1600);
+    });
+  </script>
+</body>
+</html>
